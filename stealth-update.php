@@ -2,14 +2,15 @@
 /**
  * @package Stealth_Update
  * @author Scott Reilly
- * @version 2.0
+ * @version 2.0.1
  */
 /*
 Plugin Name: Stealth Update
-Version: 2.0
+Version: 2.0.1
 Plugin URI: http://coffee2code.com/wp-plugins/stealth-update/
 Author: Scott Reilly
 Author URI: http://coffee2code.com
+Text Domain: stealth-update
 Description: Adds the ability to update a post without updating the post_modified timestamp for the post.
 
 Compatible with WordPress 2.9+, 3.0+
@@ -36,9 +37,9 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRA
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-if ( !class_exists( 'StealthUpdate' ) ) :
+if ( !class_exists( 'c2c_StealthUpdate' ) ) :
 
-class StealthUpdate {
+class c2c_StealthUpdate {
 
 	var $field = 'stealth_update';
 	var $meta_key = '_stealth-update'; // Filterable via 'stealth_update_meta_key' filter
@@ -46,7 +47,7 @@ class StealthUpdate {
 	var $textdomain = 'stealth-update';
 	var $textdomain_subdir = 'lang';
 
-	function StealthUpdate() {
+	function c2c_StealthUpdate() {
 		add_action( 'init', array( &$this, 'init' ) );
 	}
 
@@ -86,11 +87,11 @@ class StealthUpdate {
 		$value = get_post_meta( $post->ID, $this->meta_key, true );
 		$checked = checked( $value, '1', false );
 		echo "<div class='misc-pub-section'><label class='selectit c2c-stealth-update' for='{$this->field}' title='";
-		esc_attr_e( 'If checked, the post\'s modification date won\'t be updated to reflect the update when the post is saved.' );
+		esc_attr_e( 'If checked, the post\'s modification date won\'t be updated to reflect the update when the post is saved.', $this->textdomain );
 		echo "'>\n";
 		echo "<input type='hidden' name='{$this->prev_field}' value='" . esc_attr( $post->post_modified ) . "' />\n";
 		echo "<input id='{$this->field}' type='checkbox' $checked value='1' name='{$this->field}' />\n";
-		_e( 'Stealth update?' );
+		_e( 'Stealth update?', $this->textdomain );
 		echo '</label></div>' . "\n";
 	}
 
@@ -117,9 +118,9 @@ class StealthUpdate {
 		return $data;
 	}
 
-} // end StealthUpdate
+} // end c2c_StealthUpdate
 
-$GLOBALS['c2c_stealth_update'] = new StealthUpdate();
+$GLOBALS['c2c_stealth_update'] = new c2c_StealthUpdate();
 
 endif; // end if !class_exists()
 
