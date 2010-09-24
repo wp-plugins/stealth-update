@@ -4,8 +4,8 @@ Donate link: http://coffee2code.com/donate
 Tags: post, update, post_modified, latest, publish, edit, coffee2code
 Requires at least: 2.9
 Tested up to: 3.0.1
-Stable tag: 2.0.1
-Version: 2.0.1
+Stable tag: 2.0.2
+Version: 2.0.2
 
 Adds the ability to update a post without updating the post_modified timestamp for the post.
 
@@ -65,6 +65,9 @@ function override_stealth_update_key( $custom_field_key ) {
 
 == Changelog ==
 
+= 2.0.2 =
+* Bugfix for auto-save losing value of stealth update status
+
 = 2.0.1 =
 * Define Text Domain plugin header
 * Supply textdomain to localization functions
@@ -98,6 +101,9 @@ function override_stealth_update_key( $custom_field_key ) {
 
 
 == Upgrade Notice ==
+
+= 2.0.2 =
+Recommended bugfix release.  Fixes bug where auto-save can lose value of stealth update status.
 
 = 2.0.1 =
 Recommended major update! Highlights: re-implemented; add class for CSS customizations; full localization support; verified WP 3.0 compatibility; dropped compatibility with version of WP older than 2.9.

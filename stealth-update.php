@@ -2,11 +2,11 @@
 /**
  * @package Stealth_Update
  * @author Scott Reilly
- * @version 2.0.1
+ * @version 2.0.2
  */
 /*
 Plugin Name: Stealth Update
-Version: 2.0.1
+Version: 2.0.2
 Plugin URI: http://coffee2code.com/wp-plugins/stealth-update/
 Author: Scott Reilly
 Author URI: http://coffee2code.com
@@ -105,16 +105,17 @@ class c2c_StealthUpdate {
 	 * @return array The unmodified $data
 	 */
 	function wp_insert_post_data( $data, $postarr ) {
-		// Update the value of the stealth update custom field
-		$new_value = isset( $postarr[$this->field] ) ? $postarr[$this->field] : '';
-		update_post_meta( $postarr['ID'], $this->meta_key, $new_value );
+		if ( isset( $postarr['post_type'] ) && ( 'revision' != $postarr['post_type'] ) ) {
+			// Update the value of the stealth update custom field
+			$new_value = isset( $postarr[$this->field] ) ? $postarr[$this->field] : '';
+			update_post_meta( $postarr['ID'], $this->meta_key, $new_value );
 
-		// Possibly revert the post_modified date to the previous post_modified date
-		if ( isset( $postarr[$this->field] ) && $postarr[$this->field] && isset( $postarr[$this->prev_field] ) ) {
-			$data['post_modified'] = $postarr[$this->prev_field];
-			$data['post_modified_gmt'] = get_gmt_from_date( $data['post_modified'] );
+			// Possibly revert the post_modified date to the previous post_modified date
+			if ( isset( $postarr[$this->field] ) && $postarr[$this->field] && isset( $postarr[$this->prev_field] ) ) {
+				$data['post_modified'] = $postarr[$this->prev_field];
+				$data['post_modified_gmt'] = get_gmt_from_date( $data['post_modified'] );
+			}
 		}
-
 		return $data;
 	}
 
