@@ -2,18 +2,18 @@
 /**
  * @package Stealth_Update
  * @author Scott Reilly
- * @version 2.0.2
+ * @version 2.1
  */
 /*
 Plugin Name: Stealth Update
-Version: 2.0.2
+Version: 2.1
 Plugin URI: http://coffee2code.com/wp-plugins/stealth-update/
 Author: Scott Reilly
 Author URI: http://coffee2code.com
 Text Domain: stealth-update
 Description: Adds the ability to update a post without updating the post_modified timestamp for the post.
 
-Compatible with WordPress 2.9+, 3.0+
+Compatible with WordPress 2.9+, 3.0+, 3.1+.
 
 =>> Read the accompanying readme.txt file for instructions and documentation.
 =>> Also, visit the plugin's homepage for additional information and updates.
@@ -22,7 +22,7 @@ Compatible with WordPress 2.9+, 3.0+
 */
 
 /*
-Copyright (c) 2009-2010 by Scott Reilly (aka coffee2code)
+Copyright (c) 2009-2011 by Scott Reilly (aka coffee2code)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
 files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -41,26 +41,27 @@ if ( !class_exists( 'c2c_StealthUpdate' ) ) :
 
 class c2c_StealthUpdate {
 
-	var $field = 'stealth_update';
-	var $meta_key = '_stealth-update'; // Filterable via 'stealth_update_meta_key' filter
-	var $prev_field = 'previous_last_modified';
-	var $textdomain = 'stealth-update';
-	var $textdomain_subdir = 'lang';
+	private static $field             = 'stealth_update';
+	private static $meta_key          = '_stealth-update'; // Filterable via 'stealth_update_meta_key' filter
+	private static $prev_field        = 'previous_last_modified';
+	private static $textdomain        = 'stealth-update';
+	private static $textdomain_subdir = 'lang';
 
-	function c2c_StealthUpdate() {
-		add_action( 'init', array( &$this, 'init' ) );
+	public static function init() {
+		add_action( 'init', array( __CLASS__, 'do_init' ) );
 	}
 
 	/**
 	 * The stealth update capability is only exposed for non-draft posts/pages.
 	 */
-	function init() {
+	public static function do_init() {
 		global $pagenow, $post;
-		$this->load_textdomain();
-		$this->meta_key = esc_attr( apply_filters( 'stealth_update_meta_key', $this->meta_key ) );
+		self::load_textdomain();
+		self::$meta_key = esc_attr( apply_filters( 'stealth_update_meta_key', self::$meta_key ) );
 //		if ( is_admin() && ( 'post.php' == $pagenow ) && !empty( $post->ID ) && ( 'draft' != $post->post_status ) )
-			add_action( 'post_submitbox_misc_actions', array( &$this, 'add_ui' ) );
-		add_filter( 'wp_insert_post_data', array( &$this, 'wp_insert_post_data' ), 2, 2 );
+		if ( is_admin() && ( 'post.php' == $pagenow ) && empty( $post ) )
+			add_action( 'post_submitbox_misc_actions', array( __CLASS__, 'add_ui' ) );
+		add_filter( 'wp_insert_post_data', array( __CLASS__, 'wp_insert_post_data' ), 2, 2 );
 	}
 
 	/**
@@ -70,9 +71,9 @@ class c2c_StealthUpdate {
 	 *
 	 * @return void
 	 */
-	function load_textdomain() {
-		$subdir = empty( $this->textdomain_subdir ) ? '' : '/'.$this->textdomain_subdir;
-		load_plugin_textdomain( $this->textdomain, false, basename( dirname( __FILE__ ) ) . $subdir );
+	public static function load_textdomain() {
+		$subdir = empty( self::$textdomain_subdir ) ? '' : ( '/' . self::$textdomain_subdir );
+		load_plugin_textdomain( self::$textdomain, false, basename( dirname( __FILE__ ) ) . $subdir );
 	}
 
 	/**
@@ -82,16 +83,16 @@ class c2c_StealthUpdate {
 	 *
 	 * @return void (Text is echoed.)
 	 */
-	function add_ui() {
+	public static function add_ui() {
 		global $post;
-		$value = get_post_meta( $post->ID, $this->meta_key, true );
+		$value = get_post_meta( $post->ID, self::$meta_key, true );
 		$checked = checked( $value, '1', false );
-		echo "<div class='misc-pub-section'><label class='selectit c2c-stealth-update' for='{$this->field}' title='";
-		esc_attr_e( 'If checked, the post\'s modification date won\'t be updated to reflect the update when the post is saved.', $this->textdomain );
+		echo "<div class='misc-pub-section'><label class='selectit c2c-stealth-update' for='" . self::$field . "' title='";
+		esc_attr_e( 'If checked, the post\'s modification date won\'t be updated to reflect the update when the post is saved.', self::$textdomain );
 		echo "'>\n";
-		echo "<input type='hidden' name='{$this->prev_field}' value='" . esc_attr( $post->post_modified ) . "' />\n";
-		echo "<input id='{$this->field}' type='checkbox' $checked value='1' name='{$this->field}' />\n";
-		_e( 'Stealth update?', $this->textdomain );
+		echo "<input type='hidden' name='" . self::$prev_field . "' value='" . esc_attr( $post->post_modified ) . "' />\n";
+		echo "<input id='" . self::$field . "' type='checkbox' $checked value='1' name='" . self::$field . "' />\n";
+		_e( 'Stealth update?', self::$textdomain );
 		echo '</label></div>' . "\n";
 	}
 
@@ -104,15 +105,15 @@ class c2c_StealthUpdate {
 	 * @param array $postarr Array of post fields and values for post being saved
 	 * @return array The unmodified $data
 	 */
-	function wp_insert_post_data( $data, $postarr ) {
+	public static function wp_insert_post_data( $data, $postarr ) {
 		if ( isset( $postarr['post_type'] ) && ( 'revision' != $postarr['post_type'] ) ) {
 			// Update the value of the stealth update custom field
-			$new_value = isset( $postarr[$this->field] ) ? $postarr[$this->field] : '';
-			update_post_meta( $postarr['ID'], $this->meta_key, $new_value );
+			$new_value = isset( $postarr[self::$field] ) ? $postarr[self::$field] : '';
+			update_post_meta( $postarr['ID'], self::$meta_key, $new_value );
 
 			// Possibly revert the post_modified date to the previous post_modified date
-			if ( isset( $postarr[$this->field] ) && $postarr[$this->field] && isset( $postarr[$this->prev_field] ) ) {
-				$data['post_modified'] = $postarr[$this->prev_field];
+			if ( isset( $postarr[self::$field] ) && $postarr[self::$field] && isset( $postarr[self::$prev_field] ) ) {
+				$data['post_modified'] = $postarr[self::$prev_field];
 				$data['post_modified_gmt'] = get_gmt_from_date( $data['post_modified'] );
 			}
 		}
@@ -121,7 +122,7 @@ class c2c_StealthUpdate {
 
 } // end c2c_StealthUpdate
 
-$GLOBALS['c2c_stealth_update'] = new c2c_StealthUpdate();
+c2c_StealthUpdate::init();
 
 endif; // end if !class_exists()
 

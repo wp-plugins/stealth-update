@@ -3,9 +3,9 @@ Contributors: coffee2code
 Donate link: http://coffee2code.com/donate
 Tags: post, update, post_modified, latest, publish, edit, coffee2code
 Requires at least: 2.9
-Tested up to: 3.0.1
-Stable tag: 2.0.2
-Version: 2.0.2
+Tested up to: 3.1
+Stable tag: 2.1
+Version: 2.1
 
 Adds the ability to update a post without updating the post_modified timestamp for the post.
 
@@ -19,6 +19,8 @@ WordPress maintains a post field called post_modified which tracks the date the 
 This plugin adds a "Stealth update?" checkbox to the "Publish" box of any post or pages "Edit Post" admin page.
 
 Note: The fact that a post was stealth updated is not retained once the update completes.  You must re-check the "Stealth update?" checkbox for subsequent updates that you wish to also be stealthy.
+
+Links: [Plugin Homepage]:(http://coffee2code.com/wp-plugins/stealth-update/) | [Author Homepage]:(http://coffee2code.com)
 
 
 == Installation ==
@@ -65,6 +67,12 @@ function override_stealth_update_key( $custom_field_key ) {
 
 == Changelog ==
 
+= 2.1 =
+* Switch from object instantiation to direct class invocation
+* Explicitly declare all functions public static and class variables private static
+* Note compatibility through WP 3.1+
+* Update copyright date (2011)
+
 = 2.0.2 =
 * Bugfix for auto-save losing value of stealth update status
 
@@ -101,6 +109,9 @@ function override_stealth_update_key( $custom_field_key ) {
 
 
 == Upgrade Notice ==
+
+= 2.1 =
+Minor update: implementation changes; noted compatibility with WP 3.1+ and updated copyright date.
 
 = 2.0.2 =
 Recommended bugfix release.  Fixes bug where auto-save can lose value of stealth update status.
