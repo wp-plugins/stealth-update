@@ -2,22 +2,25 @@
 /**
  * @package Stealth_Update
  * @author Scott Reilly
- * @version 2.1
+ * @version 2.2
  */
 /*
 Plugin Name: Stealth Update
-Version: 2.1
+Version: 2.2
 Plugin URI: http://coffee2code.com/wp-plugins/stealth-update/
 Author: Scott Reilly
 Author URI: http://coffee2code.com
 Text Domain: stealth-update
 Description: Adds the ability to update a post without updating the post_modified timestamp for the post.
 
-Compatible with WordPress 2.9+, 3.0+, 3.1+.
+Compatible with WordPress 2.9+, 3.0+, 3.1+, 3.2+.
 
 =>> Read the accompanying readme.txt file for instructions and documentation.
 =>> Also, visit the plugin's homepage for additional information and updates.
 =>> Or visit: http://wordpress.org/extend/plugins/stealth-update/
+
+TODO:
+	* Update screenshots for WP 3.2
 
 */
 
@@ -37,7 +40,7 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRA
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-if ( !class_exists( 'c2c_StealthUpdate' ) ) :
+if ( ! class_exists( 'c2c_StealthUpdate' ) ) :
 
 class c2c_StealthUpdate {
 
@@ -85,8 +88,13 @@ class c2c_StealthUpdate {
 	 */
 	public static function add_ui() {
 		global $post;
-		$value = get_post_meta( $post->ID, self::$meta_key, true );
+
+		if ( apply_filters( 'c2c_stealth_update_default', false, $post ) )
+			$value = '1';
+		else
+			$value = get_post_meta( $post->ID, self::$meta_key, true );
 		$checked = checked( $value, '1', false );
+
 		echo "<div class='misc-pub-section'><label class='selectit c2c-stealth-update' for='" . self::$field . "' title='";
 		esc_attr_e( 'If checked, the post\'s modification date won\'t be updated to reflect the update when the post is saved.', self::$textdomain );
 		echo "'>\n";
@@ -106,7 +114,8 @@ class c2c_StealthUpdate {
 	 * @return array The unmodified $data
 	 */
 	public static function wp_insert_post_data( $data, $postarr ) {
-		if ( isset( $postarr['post_type'] ) && ( 'revision' != $postarr['post_type'] ) ) {
+		if ( isset( $postarr['post_type'] ) && ( 'revision' != $postarr['post_type'] ) &&
+			! ( isset( $_POST['action'] ) && 'inline-save' == $_POST['action'] ) ) {
 			// Update the value of the stealth update custom field
 			$new_value = isset( $postarr[self::$field] ) ? $postarr[self::$field] : '';
 			update_post_meta( $postarr['ID'], self::$meta_key, $new_value );

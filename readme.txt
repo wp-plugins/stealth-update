@@ -3,9 +3,9 @@ Contributors: coffee2code
 Donate link: http://coffee2code.com/donate
 Tags: post, update, post_modified, latest, publish, edit, coffee2code
 Requires at least: 2.9
-Tested up to: 3.1
-Stable tag: 2.1
-Version: 2.1
+Tested up to: 3.2
+Stable tag: 2.2
+Version: 2.2
 
 Adds the ability to update a post without updating the post_modified timestamp for the post.
 
@@ -18,9 +18,9 @@ WordPress maintains a post field called post_modified which tracks the date the 
 
 This plugin adds a "Stealth update?" checkbox to the "Publish" box of any post or pages "Edit Post" admin page.
 
-Note: The fact that a post was stealth updated is not retained once the update completes.  You must re-check the "Stealth update?" checkbox for subsequent updates that you wish to also be stealthy.
+Note: The fact that a post was stealth updated is not retained once the update completes.  You must re-check the "Stealth update?" checkbox for subsequent updates that you wish to also be stealthy (unless you configure the checkbox to be checked by default -- see FAQ).
 
-Links: [Plugin Homepage]:(http://coffee2code.com/wp-plugins/stealth-update/) | [Author Homepage]:(http://coffee2code.com)
+Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/stealth-update/) | [Author Homepage](http://coffee2code.com)
 
 
 == Installation ==
@@ -42,10 +42,14 @@ Links: [Plugin Homepage]:(http://coffee2code.com/wp-plugins/stealth-update/) | [
 
 This update dates for posts are used by feeds to indicate the latest update to each post or to report the latest updated post.  Plugins and other manual uses of some of WordPress's template tags may also reference the post modification date to call attention to posts that have been updated.  However, if an update is such that you don't want it to be recorded in the post_modified date field (perhaps due to the update being a small formatting/editing change or fix, or if you just want to keep quiet about an update), then this plugin is for you.
 
+= Can I have the checkbox checked by default? =
+
+Yes. See the Filters section (under Other Notes) and look for the example using the 'c2c_stealth_update_default' filter. You'll have to put that code into your active theme's functions.php file.
+
 
 == Filters ==
 
-The plugin is further customizable via one filter. Typically, these customizations would be put into your active theme's functions.php file, or used by another plugin.
+The plugin is further customizable via two filters. Typically, these customizations would be put into your active theme's functions.php file, or used by another plugin.
 
 = stealth_update_meta_key (filter) =
 
@@ -64,8 +68,30 @@ function override_stealth_update_key( $custom_field_key ) {
 }
 `
 
+= c2c_stealth_update_default (filter) =
+
+The 'c2c_stealth_update_default' filter allows you to override the default state of the 'Stealth Update?' checkbox.
+
+Arguments:
+
+* $state (boolean): The default state of the checkbox. By default this is false.
+* $post (WP_Post): The post currently being created/edited.
+
+Example:
+
+`
+// Have the Stealth Update? checkbox checked by default.
+add_filter( 'c2c_stealth_update_default', '__return_true' );
+`
+
 
 == Changelog ==
+
+= 2.2 =
+* Add filter 'c2c_stealth_update_default' to allow configuring checkbox to be checked by default
+* Note compatibility through WP 3.2+
+* Minor code formatting changes (spacing)
+* Fix plugin homepage and author links in description in readme.txt
 
 = 2.1 =
 * Switch from object instantiation to direct class invocation
@@ -103,12 +129,14 @@ function override_stealth_update_key( $custom_field_key ) {
 * Add Changelog and Upgrade Notice sections to readme.txt
 * First commit to WP plugin repository
 
-
 = 1.0 =
 * Initial release
 
 
 == Upgrade Notice ==
+
+= 2.2 =
+Minor update: added new filter to allow making checkbox checked by default; noted compatibility through WP 3.2+
 
 = 2.1 =
 Minor update: implementation changes; noted compatibility with WP 3.1+ and updated copyright date.
