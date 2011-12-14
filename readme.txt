@@ -3,9 +3,9 @@ Contributors: coffee2code
 Donate link: http://coffee2code.com/donate
 Tags: post, update, post_modified, latest, publish, edit, coffee2code
 Requires at least: 2.9
-Tested up to: 3.2.1
-Stable tag: 2.2
-Version: 2.2
+Tested up to: 3.3
+Stable tag: 2.2.1
+Version: 2.2.1
 
 Adds the ability to update a post without updating the post_modified timestamp for the post.
 
@@ -20,7 +20,7 @@ This plugin adds a "Stealth update?" checkbox to the "Publish" box of any post o
 
 Note: The fact that a post was stealth updated is not retained once the update completes.  You must re-check the "Stealth update?" checkbox for subsequent updates that you wish to also be stealthy (unless you configure the checkbox to be checked by default -- see FAQ).
 
-Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/stealth-update/) | [Author Homepage](http://coffee2code.com)
+Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/stealth-update/) | [Plugin Directory Page](http://wordpress.org/extend/plugins/stealth-update/) | [Author Homepage](http://coffee2code.com)
 
 
 == Installation ==
@@ -87,6 +87,18 @@ add_filter( 'c2c_stealth_update_default', '__return_true' );
 
 == Changelog ==
 
+= 2.2.1 =
+* Add version() to return plugin's version
+* Update readme with example and documentation for new filter
+* Note compatibility through WP 3.3+
+* Update screenshots for WP 3.3
+* Use DIRECTORY_SEPARATOR instead of hardcoded '/'
+* Create 'lang' subdirectory and move .pot file into it
+* Regenerate .pot
+* Add 'Domain Path' directive to top of main plugin file
+* Add link to plugin directory page to readme.txt
+* Update copyright date (2012)
+
 = 2.2 =
 * Add filter 'c2c_stealth_update_default' to allow configuring checkbox to be checked by default
 * Note compatibility through WP 3.2+
@@ -134,6 +146,9 @@ add_filter( 'c2c_stealth_update_default', '__return_true' );
 
 
 == Upgrade Notice ==
+
+= 2.2.1 =
+Minor update: moved .pot file into 'lang' subdirectory; noted compatibility through WP 3.3+.
 
 = 2.2 =
 Minor update: added new filter to allow making checkbox checked by default; noted compatibility through WP 3.2+
