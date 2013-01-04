@@ -2,19 +2,21 @@
 /**
  * @package Stealth_Update
  * @author Scott Reilly
- * @version 2.2.1
+ * @version 2.3
  */
 /*
 Plugin Name: Stealth Update
-Version: 2.2.1
+Version: 2.3
 Plugin URI: http://coffee2code.com/wp-plugins/stealth-update/
 Author: Scott Reilly
 Author URI: http://coffee2code.com
 Text Domain: stealth-update
 Domain Path: /lang/
-Description: Adds the ability to update a post without updating the post_modified timestamp for the post.
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Description: Adds the ability to update a post without having WordPress automatically update the post's post_modified timestamp.
 
-Compatible with WordPress 2.9+, 3.0+, 3.1+, 3.2+.
+Compatible with WordPress 2.9+ through 3.5+.
 
 =>> Read the accompanying readme.txt file for instructions and documentation.
 =>> Also, visit the plugin's homepage for additional information and updates.
@@ -22,20 +24,24 @@ Compatible with WordPress 2.9+, 3.0+, 3.1+, 3.2+.
 */
 
 /*
-Copyright (c) 2009-2012 by Scott Reilly (aka coffee2code)
+	Copyright (c) 2009-2013 by Scott Reilly (aka coffee2code)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
-files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
-modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following conditions:
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+
+defined( 'ABSPATH' ) or die();
 
 if ( ! class_exists( 'c2c_StealthUpdate' ) ) :
 
@@ -44,8 +50,6 @@ class c2c_StealthUpdate {
 	private static $field             = 'stealth_update';
 	private static $meta_key          = '_stealth-update'; // Filterable via 'stealth_update_meta_key' filter
 	private static $prev_field        = 'previous_last_modified';
-	private static $textdomain        = 'stealth-update';
-	private static $textdomain_subdir = 'lang';
 
 	/**
 	 * Returns version of the plugin.
@@ -53,7 +57,7 @@ class c2c_StealthUpdate {
 	 * @since 2.2.1
 	 */
 	public static function version() {
-		return '2.2.1';
+		return '2.3';
 	}
 
 	/**
@@ -65,37 +69,40 @@ class c2c_StealthUpdate {
 
 	/**
 	 * The stealth update capability is only exposed for non-draft posts/pages.
+	 *
+	 * @since 2.0
+	 * @uses apply_filters() Calls 'c2c_stealth_update_meta_key' with default meta key name
 	 */
 	public static function do_init() {
 		global $pagenow, $post;
-		self::load_textdomain();
-		self::$meta_key = esc_attr( apply_filters( 'stealth_update_meta_key', self::$meta_key ) );
 
+		// Load textdomain
+		load_plugin_textdomain( 'stealth-update', false, basename( dirname( __FILE__ ) ) . DIRECTORY_SEPARATOR . 'lang' );
+
+		// Deprecated as of 2.3.
+		$meta_key = esc_attr( apply_filters( 'stealth_update_meta_key', self::$meta_key ) );
+
+		// Apply custom filter to obtain meta key name.
+		$meta_key = esc_attr( apply_filters( 'c2c_stealth_update_meta_key', $meta_key ) );
+
+		// Only override the meta key name if one was specified. Otherwise the
+		// default remains (since a meta key is necessary)
+		if ( ! empty( $meta_key ) )
+			self::$meta_key = $meta_key;
+
+		// Register hooks
 //		if ( is_admin() && ( 'post.php' == $pagenow ) && !empty( $post->ID ) && ( 'draft' != $post->post_status ) )
 		if ( is_admin() && ( 'post.php' == $pagenow ) && empty( $post ) )
 			add_action( 'post_submitbox_misc_actions', array( __CLASS__, 'add_ui' ) );
 		add_action( 'quick_edit_custom_box', array( __CLASS__, 'add_ui' ) );
-//		if ( defined( 'WP_ADMIN' ) && defined( 'DOING_AJAX' ) )
-//			add_filter( 'current_screen', array( __CLASS__, 'hack_save_on_quick_edit' ) );
 		add_filter( 'wp_insert_post_data',   array( __CLASS__, 'wp_insert_post_data' ), 2, 2 );
-	}
-
-	/**
-	 * Loads the localization textdomain for the plugin.
-	 *
-	 * @since 2.0
-	 *
-	 * @return void
-	 */
-	public static function load_textdomain() {
-		$subdir = empty( self::$textdomain_subdir ) ? '' : ( DIRECTORY_SEPARATOR . self::$textdomain_subdir );
-		load_plugin_textdomain( self::$textdomain, false, basename( dirname( __FILE__ ) ) . $subdir );
 	}
 
 	/**
 	 * Draws the UI to prompt user if stealth update should be present for the post.
 	 *
 	 * @since 2.0
+	 * @uses apply_filters() Calls 'c2c_stealth_update_default' with stealth publish state default (false)
 	 *
 	 * @return void (Text is echoed.)
 	 */
@@ -109,22 +116,12 @@ class c2c_StealthUpdate {
 		$checked = checked( $value, '1', false );
 
 		echo "<div class='misc-pub-section'><label class='selectit c2c-stealth-update' for='" . self::$field . "' title='";
-		esc_attr_e( 'If checked, the post\'s modification date won\'t be updated to reflect the update when the post is saved.', self::$textdomain );
+		esc_attr_e( 'If checked, the post\'s modification date won\'t be updated to reflect the update when the post is saved.', 'stealth-update' );
 		echo "'>\n";
 		echo "<input type='hidden' name='" . self::$prev_field . "' value='" . esc_attr( $post->post_modified ) . "' />\n";
 		echo "<input id='" . self::$field . "' type='checkbox' $checked value='1' name='" . self::$field . "' />\n";
-		_e( 'Stealth update?', self::$textdomain );
+		_e( 'Stealth update?', 'stealth-update' );
 		echo '</label></div>' . "\n";
-	}
-
-	function hack_save_on_quick_edit( $current_screen ) {
-		// Only do anything if doing an inline-save.
-		if ( isset( $_POST['action'] ) && 'inline-save' == $_POST['action'] ) {
-			$post_data = &$_POST;
-			die( "I GOT (" . $_POST[self::$field] . ")");
-		}
-
-		return $current_screen;
 	}
 
 	/**
@@ -143,7 +140,7 @@ class c2c_StealthUpdate {
 			update_post_meta( $postarr['ID'], self::$meta_key, $new_value );
 
 			// Possibly revert the post_modified date to the previous post_modified date
-			if ( isset( $postarr[self::$field] ) && $postarr[self::$field] && isset( $postarr[self::$prev_field] ) ) {
+			if ( isset( $postarr[ self::$field ] ) && $postarr[ self::$field ] && isset( $postarr[ self::$prev_field ] ) ) {
 				$data['post_modified'] = $postarr[self::$prev_field];
 				$data['post_modified_gmt'] = get_gmt_from_date( $data['post_modified'] );
 			}
@@ -156,5 +153,3 @@ class c2c_StealthUpdate {
 c2c_StealthUpdate::init();
 
 endif; // end if !class_exists()
-
-?>

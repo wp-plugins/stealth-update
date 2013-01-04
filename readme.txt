@@ -2,17 +2,19 @@
 Contributors: coffee2code
 Donate link: http://coffee2code.com/donate
 Tags: post, update, post_modified, latest, publish, edit, coffee2code
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 2.9
-Tested up to: 3.3
-Stable tag: 2.2.1
-Version: 2.2.1
+Tested up to: 3.5
+Stable tag: 2.3
+Version: 2.3
 
-Adds the ability to update a post without updating the post_modified timestamp for the post.
+Adds the ability to update a post without having WordPress automatically update the post's post_modified timestamp.
 
 
 == Description ==
 
-Adds the ability to update a post without updating the post_modified timestamp for the post.
+Adds the ability to update a post without having WordPress automatically update the post's post_modified timestamp.
 
 WordPress maintains a post field called post_modified which tracks the date the post was last edited.  This value is used by feeds to indicate the latest update to each post or to report the latest updated post.  Plugins and other manual uses of some of WordPress's template tags may also reference the post modification date to call attention to posts that have been updated.  However, if an update is such that you don't want it to be recorded in the post_modified date field (perhaps due to the update being a small formatting/editing change or fix, or if you just want to keep quiet about an update), then this plugin is for you.
 
@@ -25,6 +27,7 @@ Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/stealth-update/) | [P
 
 == Installation ==
 
+1. Whether installing or updating, whether this plugin or any other, it is always advisable to back-up your data before starting
 1. Unzip `stealth-update.zip` inside the `/wp-content/plugins/` directory (or install via the built-in WordPress plugin installer)
 1. Activate the plugin through the 'Plugins' admin menu in WordPress
 1. Click the 'Stealth update?' checkbox when updating a post to prevent the date of the update from being saved for the post.
@@ -51,9 +54,9 @@ Yes. See the Filters section (under Other Notes) and look for the example using 
 
 The plugin is further customizable via two filters. Typically, these customizations would be put into your active theme's functions.php file, or used by another plugin.
 
-= stealth_update_meta_key (filter) =
+= c2c_stealth_update_meta_key (filter) =
 
-The 'stealth_update_meta_key' filter allows you to override the name of the custom field key used by the plugin to store a post's stealth update status.  This isn't a common need.
+The 'c2c_stealth_update_meta_key' filter allows you to override the name of the custom field key used by the plugin to store a post's stealth update status.  This isn't a common need.
 
 Arguments:
 
@@ -62,7 +65,7 @@ Arguments:
 Example:
 
 `
-add_filter( 'stealth_update_meta_key', 'override_stealth_update_key' );
+add_filter( 'c2c_stealth_update_meta_key', 'override_stealth_update_key' );
 function override_stealth_update_key( $custom_field_key ) {
 	return '_my_custom_stealth-update';
 }
@@ -86,6 +89,25 @@ add_filter( 'c2c_stealth_update_default', '__return_true' );
 
 
 == Changelog ==
+
+= 2.3 =
+* Deprecate 'stealth_update_meta_key' filter in favor of 'c2c_stealth_update_meta_key' (but keep it temporarily for backwards compatibility)
+* Don't allow a blank string from 'c2c_stealth_update_meta_key' to override the default meta key name
+* Remove private static $textdomain and its use; include textdomain name as string in translation calls
+* Remove function `load_textdomain()`
+* Add check to prevent execution of code if file is directly accessed
+* Re-license as GPLv2 or later (from X11)
+* Add 'License' and 'License URI' header tags to readme.txt and plugin file
+* Regenerate .pot
+* Tweak description
+* Minor improvements to inline and readme documentation
+* Minor code reformatting
+* Remove ending PHP close tag
+* Remove commented out debugging code
+* Note compatibility through WP 3.5+
+* Tweak installation instructions in readme.txt
+* Update copyright date (2013)
+* Move screenshots into repo's assets directory
 
 = 2.2.1 =
 * Add version() to return plugin's version
@@ -146,6 +168,9 @@ add_filter( 'c2c_stealth_update_default', '__return_true' );
 
 
 == Upgrade Notice ==
+
+= 2.3 =
+Recommended update: renamed and deprecated a filter; noted compatibility through WP 3.5+; and more.
 
 = 2.2.1 =
 Minor update: moved .pot file into 'lang' subdirectory; noted compatibility through WP 3.3+.
