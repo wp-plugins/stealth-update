@@ -1,25 +1,25 @@
-# Translation of the WordPress plugin Stealth Update v2.3 by Scott Reilly.
-# Copyright (C) 2013 Scott Reilly
+# Translation of the WordPress plugin Stealth Update v2.4 by Scott Reilly.
+# Copyright (C) 2014 Scott Reilly
 # This file is distributed under the same license as the Stealth Update plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Stealth Update 2.3\n"
+"Project-Id-Version: Stealth Update 2.4\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/stealth-update\n"
-"POT-Creation-Date: 2013-01-04 22:55:42+00:00\n"
+"POT-Creation-Date: 2014-01-23 00:29:09+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: stealth-update.php:121
+#: stealth-update.php:127
 msgid ""
 "If checked, the post's modification date won't be updated to reflect the "
 "update when the post is saved."
 msgstr ""
 
-#: stealth-update.php:125
+#: stealth-update.php:131
 msgid "Stealth update?"
 msgstr ""
 

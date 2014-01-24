@@ -2,11 +2,11 @@
 /**
  * @package Stealth_Update
  * @author Scott Reilly
- * @version 2.3
+ * @version 2.4
  */
 /*
 Plugin Name: Stealth Update
-Version: 2.3
+Version: 2.4
 Plugin URI: http://coffee2code.com/wp-plugins/stealth-update/
 Author: Scott Reilly
 Author URI: http://coffee2code.com
@@ -16,15 +16,20 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Description: Adds the ability to update a post without having WordPress automatically update the post's post_modified timestamp.
 
-Compatible with WordPress 2.9+ through 3.5+.
+Compatible with WordPress 3.6+ through 3.8+.
+
+TODO:
+	* Make it work for direct, non-UI calls to wp_update_post()
+	* Add class function get_meta_key() as getter for meta_key and
+	  filter on request rather than init to allow late filtering
 
 =>> Read the accompanying readme.txt file for instructions and documentation.
 =>> Also, visit the plugin's homepage for additional information and updates.
-=>> Or visit: http://wordpress.org/extend/plugins/stealth-update/
+=>> Or visit: http://wordpress.org/plugins/stealth-update/
 */
 
 /*
-	Copyright (c) 2009-2013 by Scott Reilly (aka coffee2code)
+	Copyright (c) 2009-2014 by Scott Reilly (aka coffee2code)
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -33,7 +38,7 @@ Compatible with WordPress 2.9+ through 3.5+.
 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
@@ -47,9 +52,9 @@ if ( ! class_exists( 'c2c_StealthUpdate' ) ) :
 
 class c2c_StealthUpdate {
 
-	private static $field             = 'stealth_update';
-	private static $meta_key          = '_stealth-update'; // Filterable via 'stealth_update_meta_key' filter
-	private static $prev_field        = 'previous_last_modified';
+	private static $field      = 'stealth_update';
+	private static $meta_key   = '_stealth-update'; // Filterable via 'stealth_update_meta_key' filter
+	private static $prev_field = 'previous_last_modified';
 
 	/**
 	 * Returns version of the plugin.
@@ -57,7 +62,7 @@ class c2c_StealthUpdate {
 	 * @since 2.2.1
 	 */
 	public static function version() {
-		return '2.3';
+		return '2.4';
 	}
 
 	/**
@@ -87,13 +92,15 @@ class c2c_StealthUpdate {
 
 		// Only override the meta key name if one was specified. Otherwise the
 		// default remains (since a meta key is necessary)
-		if ( ! empty( $meta_key ) )
+		if ( ! empty( $meta_key ) ) {
 			self::$meta_key = $meta_key;
+		}
 
 		// Register hooks
 //		if ( is_admin() && ( 'post.php' == $pagenow ) && !empty( $post->ID ) && ( 'draft' != $post->post_status ) )
-		if ( is_admin() && ( 'post.php' == $pagenow ) && empty( $post ) )
+		if ( is_admin() && ( 'post.php' == $pagenow ) && empty( $post ) ) {
 			add_action( 'post_submitbox_misc_actions', array( __CLASS__, 'add_ui' ) );
+		}
 		add_action( 'quick_edit_custom_box', array( __CLASS__, 'add_ui' ) );
 		add_filter( 'wp_insert_post_data',   array( __CLASS__, 'wp_insert_post_data' ), 2, 2 );
 	}
@@ -109,10 +116,11 @@ class c2c_StealthUpdate {
 	public static function add_ui() {
 		global $post;
 
-		if ( apply_filters( 'c2c_stealth_update_default', false, $post ) )
+		if ( apply_filters( 'c2c_stealth_update_default', false, $post ) ) {
 			$value = '1';
-		else
+		} else {
 			$value = get_post_meta( $post->ID, self::$meta_key, true );
+		}
 		$checked = checked( $value, '1', false );
 
 		echo "<div class='misc-pub-section'><label class='selectit c2c-stealth-update' for='" . self::$field . "' title='";
@@ -129,19 +137,19 @@ class c2c_StealthUpdate {
 	 *
 	 * @since 2.0
 	 *
-	 * @param array $data Data
-	 * @param array $postarr Array of post fields and values for post being saved
+	 * @param  array $data    Data
+	 * @param  array $postarr Array of post fields and values for post being saved
 	 * @return array The unmodified $data
 	 */
 	public static function wp_insert_post_data( $data, $postarr ) {
 		if ( isset( $postarr['post_type'] ) && ( 'revision' != $postarr['post_type'] ) ) {
 			// Update the value of the stealth update custom field
-			$new_value = isset( $postarr[self::$field] ) ? $postarr[self::$field] : '';
+			$new_value = isset( $postarr[ self::$field ] ) ? $postarr[ self::$field ] : '';
 			update_post_meta( $postarr['ID'], self::$meta_key, $new_value );
 
 			// Possibly revert the post_modified date to the previous post_modified date
 			if ( isset( $postarr[ self::$field ] ) && $postarr[ self::$field ] && isset( $postarr[ self::$prev_field ] ) ) {
-				$data['post_modified'] = $postarr[self::$prev_field];
+				$data['post_modified']     = $postarr[ self::$prev_field ];
 				$data['post_modified_gmt'] = get_gmt_from_date( $data['post_modified'] );
 			}
 		}
