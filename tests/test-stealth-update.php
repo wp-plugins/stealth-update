@@ -8,7 +8,7 @@ class Stealth_Update_Test extends WP_UnitTestCase {
 
 
 
-	/**
+	/*
 	 * HELPER FUNCTIONS
 	 */
 
@@ -24,17 +24,37 @@ class Stealth_Update_Test extends WP_UnitTestCase {
 
 
 
-	/**
+	/*
 	 * FUNCTIONS FOR HOOKING ACTIONS/FILTERS
 	 */
 
 
 
-	/**
+	/*
 	 * TESTS
 	 */
 
 
+
+	function test_class_exists() {
+		$this->assertTrue( class_exists( 'c2c_StealthUpdate' ) );
+	}
+
+	function test_version() {
+		$this->assertEquals( '2.4.1', c2c_StealthUpdate::version() );
+	}
+
+	function test_init_action_triggers_do_init() {
+		$this->assertNotFalse( has_action( 'init', array( 'c2c_StealthUpdate', 'do_init' ) ) );
+	}
+
+	function test_quick_edit_custom_box_action_triggers_add_ui() {
+		$this->assertNotFalse( has_action( 'quick_edit_custom_box', array( 'c2c_StealthUpdate', 'add_ui' ) ) );
+	}
+
+	function test_wp_insert_post_data_filter_triggers_wp_insert_post_data() {
+		$this->assertNotFalse( has_filter( 'wp_insert_post_data', array( 'c2c_StealthUpdate', 'wp_insert_post_data' ), 2, 2 ) );
+	}
 
 	function test_non_stealth_post_not_affected_on_update() {
 		$date = '2014-01-03 12:01:30';

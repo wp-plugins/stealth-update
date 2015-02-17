@@ -5,8 +5,8 @@ Tags: post, update, post_modified, latest, publish, edit, coffee2code
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.6
-Tested up to: 3.8
-Stable tag: 2.4
+Tested up to: 4.1
+Stable tag: 2.4.1
 
 Adds the ability to update a post without having WordPress automatically update the post's post_modified timestamp.
 
@@ -21,7 +21,7 @@ This plugin adds a "Stealth update?" checkbox to the "Publish" box of any post's
 
 Note: The plugin records when a post is stealth updated, so subsequent edits of the post will have the "Stealth update?" checkbox checked by default.
 
-Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/stealth-update/) | [Plugin Directory Page](http://wordpress.org/plugins/stealth-update/) | [Author Homepage](http://coffee2code.com)
+Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/stealth-update/) | [Plugin Directory Page](https://wordpress.org/plugins/stealth-update/) | [Author Homepage](http://coffee2code.com)
 
 
 == Installation ==
@@ -68,10 +68,10 @@ Arguments:
 Example:
 
 `
-add_filter( 'c2c_stealth_update_meta_key', 'override_stealth_update_key' );
 function override_stealth_update_key( $custom_field_key ) {
 	return '_my_custom_stealth-update';
 }
+add_filter( 'c2c_stealth_update_meta_key', 'override_stealth_update_key' );
 `
 
 = c2c_stealth_update_default (filter) =
@@ -92,6 +92,17 @@ add_filter( 'c2c_stealth_update_default', '__return_true' );
 
 
 == Changelog ==
+
+= 2.4.1 (2015-02-17) =
+* Add more unit tests
+* Reformat plugin header
+* Use __DIR__ instead of `dirname(__FILE__)`
+* Note compatibility through WP 4.1+
+* Change documentation links to wp.org to be https
+* Minor documentation spacing changes throughout
+* Update copyright date (2015)
+* Add plugin icon
+* Regenerate .pot
 
 = 2.4 (2014-01-23) =
 * Add unit tests
@@ -183,6 +194,9 @@ add_filter( 'c2c_stealth_update_default', '__return_true' );
 
 
 == Upgrade Notice ==
+
+= 2.4.1 =
+Trivial update: added more unit tests; noted compatibility through WP 4.1+; updated copyright date (2015); added plugin icon
 
 = 2.4 =
 Minor update: added unit tests; noted compatibility through WP 3.8+; dropped compatibility with versions of WP older than 3.6

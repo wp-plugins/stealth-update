@@ -1,35 +1,36 @@
 <?php
 /**
+ * Plugin Name: Stealth Update
+ * Version:     2.4.1
+ * Plugin URI:  http://coffee2code.com/wp-plugins/stealth-update/
+ * Author:      Scott Reilly
+ * Author URI:  http://coffee2code.com
+ * Text Domain: stealth-update
+ * Domain Path: /lang/
+ * License:     GPLv2 or later
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ * Description: Adds the ability to update a post without having WordPress automatically update the post's post_modified timestamp.
+ *
+ * Compatible with WordPress 3.6+ through 4.1+.
+ *
+ * =>> Read the accompanying readme.txt file for instructions and documentation.
+ * =>> Also, visit the plugin's homepage for additional information and updates.
+ * =>> Or visit: https://wordpress.org/plugins/stealth-update/
+ *
  * @package Stealth_Update
  * @author Scott Reilly
- * @version 2.4
+ * @version 2.4.1
  */
+
 /*
-Plugin Name: Stealth Update
-Version: 2.4
-Plugin URI: http://coffee2code.com/wp-plugins/stealth-update/
-Author: Scott Reilly
-Author URI: http://coffee2code.com
-Text Domain: stealth-update
-Domain Path: /lang/
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Description: Adds the ability to update a post without having WordPress automatically update the post's post_modified timestamp.
-
-Compatible with WordPress 3.6+ through 3.8+.
-
 TODO:
 	* Make it work for direct, non-UI calls to wp_update_post()
 	* Add class function get_meta_key() as getter for meta_key and
 	  filter on request rather than init to allow late filtering
-
-=>> Read the accompanying readme.txt file for instructions and documentation.
-=>> Also, visit the plugin's homepage for additional information and updates.
-=>> Or visit: http://wordpress.org/plugins/stealth-update/
 */
 
 /*
-	Copyright (c) 2009-2014 by Scott Reilly (aka coffee2code)
+	Copyright (c) 2009-2015 by Scott Reilly (aka coffee2code)
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -62,11 +63,11 @@ class c2c_StealthUpdate {
 	 * @since 2.2.1
 	 */
 	public static function version() {
-		return '2.4';
+		return '2.4.1';
 	}
 
 	/**
-	 * Initializer
+	 * Initializer.
 	 */
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'do_init' ) );
@@ -82,7 +83,7 @@ class c2c_StealthUpdate {
 		global $pagenow, $post;
 
 		// Load textdomain
-		load_plugin_textdomain( 'stealth-update', false, basename( dirname( __FILE__ ) ) . DIRECTORY_SEPARATOR . 'lang' );
+		load_plugin_textdomain( 'stealth-update', false, basename( __DIR__ ) . DIRECTORY_SEPARATOR . 'lang' );
 
 		// Deprecated as of 2.3.
 		$meta_key = esc_attr( apply_filters( 'stealth_update_meta_key', self::$meta_key ) );
@@ -110,8 +111,6 @@ class c2c_StealthUpdate {
 	 *
 	 * @since 2.0
 	 * @uses apply_filters() Calls 'c2c_stealth_update_default' with stealth publish state default (false)
-	 *
-	 * @return void (Text is echoed.)
 	 */
 	public static function add_ui() {
 		global $post;
