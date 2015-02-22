@@ -41,7 +41,7 @@ class Stealth_Update_Test extends WP_UnitTestCase {
 	}
 
 	function test_version() {
-		$this->assertEquals( '2.4.1', c2c_StealthUpdate::version() );
+		$this->assertEquals( '2.4.2', c2c_StealthUpdate::version() );
 	}
 
 	function test_init_action_triggers_do_init() {

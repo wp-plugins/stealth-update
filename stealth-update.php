@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Stealth Update
- * Version:     2.4.1
+ * Version:     2.4.2
  * Plugin URI:  http://coffee2code.com/wp-plugins/stealth-update/
  * Author:      Scott Reilly
  * Author URI:  http://coffee2code.com
@@ -19,7 +19,7 @@
  *
  * @package Stealth_Update
  * @author Scott Reilly
- * @version 2.4.1
+ * @version 2.4.2
  */
 
 /*
@@ -63,7 +63,7 @@ class c2c_StealthUpdate {
 	 * @since 2.2.1
 	 */
 	public static function version() {
-		return '2.4.1';
+		return '2.4.2';
 	}
 
 	/**
@@ -83,7 +83,7 @@ class c2c_StealthUpdate {
 		global $pagenow, $post;
 
 		// Load textdomain
-		load_plugin_textdomain( 'stealth-update', false, basename( __DIR__ ) . DIRECTORY_SEPARATOR . 'lang' );
+		load_plugin_textdomain( 'stealth-update', false, basename( dirname( __FILE__ ) ) . DIRECTORY_SEPARATOR . 'lang' );
 
 		// Deprecated as of 2.3.
 		$meta_key = esc_attr( apply_filters( 'stealth_update_meta_key', self::$meta_key ) );
