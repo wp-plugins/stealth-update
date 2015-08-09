@@ -5,8 +5,8 @@ Tags: post, update, post_modified, latest, publish, edit, coffee2code
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.6
-Tested up to: 4.1
-Stable tag: 2.4.2
+Tested up to: 4.3
+Stable tag: 2.4.3
 
 Adds the ability to update a post without having WordPress automatically update the post's post_modified timestamp.
 
@@ -93,6 +93,10 @@ add_filter( 'c2c_stealth_update_default', '__return_true' );
 
 == Changelog ==
 
+= 2.4.3 (2015-08-09) =
+* Bugfix: Remove 'Stealth Update?' checkbox from quick edit panel as its implementation has since been broken. Potential return in v2.5.
+* Update: Note compatibility through WP 4.3+
+
 = 2.4.2 (2015-02-21) =
 * Revert to using `dirname(__FILE__)`; __DIR__ is only supported in PHP 5.3+
 
@@ -101,7 +105,7 @@ add_filter( 'c2c_stealth_update_default', '__return_true' );
 * Reformat plugin header
 * Use __DIR__ instead of `dirname(__FILE__)`
 * Note compatibility through WP 4.1+
-* Change documentation links to wp.org to be https
+* Change documentation links to w.org to be https
 * Minor documentation spacing changes throughout
 * Update copyright date (2015)
 * Add plugin icon
@@ -197,6 +201,9 @@ add_filter( 'c2c_stealth_update_default', '__return_true' );
 
 
 == Upgrade Notice ==
+
+= 2.4.3 =
+Bugfix release: Remove checkbox from quick edit panel as its implementation has been broken. Possible return in v2.5. Noted compatibility through WP 4.3+
 
 = 2.4.2 =
 Bugfix release (for sites using the ancient PHP 5.2): revert use of __DIR__ constant since it wasn't introduced until PHP 5.3

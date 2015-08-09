@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Stealth Update
- * Version:     2.4.2
+ * Version:     2.4.3
  * Plugin URI:  http://coffee2code.com/wp-plugins/stealth-update/
  * Author:      Scott Reilly
  * Author URI:  http://coffee2code.com
@@ -11,15 +11,15 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Description: Adds the ability to update a post without having WordPress automatically update the post's post_modified timestamp.
  *
- * Compatible with WordPress 3.6+ through 4.1+.
+ * Compatible with WordPress 3.6+ through 4.3+.
  *
  * =>> Read the accompanying readme.txt file for instructions and documentation.
  * =>> Also, visit the plugin's homepage for additional information and updates.
  * =>> Or visit: https://wordpress.org/plugins/stealth-update/
  *
  * @package Stealth_Update
- * @author Scott Reilly
- * @version 2.4.2
+ * @author  Scott Reilly
+ * @version 2.4.3
  */
 
 /*
@@ -63,7 +63,7 @@ class c2c_StealthUpdate {
 	 * @since 2.2.1
 	 */
 	public static function version() {
-		return '2.4.2';
+		return '2.4.3';
 	}
 
 	/**
@@ -102,7 +102,6 @@ class c2c_StealthUpdate {
 		if ( is_admin() && ( 'post.php' == $pagenow ) && empty( $post ) ) {
 			add_action( 'post_submitbox_misc_actions', array( __CLASS__, 'add_ui' ) );
 		}
-		add_action( 'quick_edit_custom_box', array( __CLASS__, 'add_ui' ) );
 		add_filter( 'wp_insert_post_data',   array( __CLASS__, 'wp_insert_post_data' ), 2, 2 );
 	}
 
