@@ -1,28 +1,27 @@
 === Stealth Update ===
 Contributors: coffee2code
-Donate link: http://coffee2code.com/donate
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6ARCFJ9TX3522
 Tags: post, update, post_modified, latest, publish, edit, coffee2code
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Requires at least: 2.9
-Tested up to: 3.5
-Stable tag: 2.3
-Version: 2.3
+Requires at least: 3.6
+Tested up to: 4.3
+Stable tag: 2.4.3
 
 Adds the ability to update a post without having WordPress automatically update the post's post_modified timestamp.
 
 
 == Description ==
 
-Adds the ability to update a post without having WordPress automatically update the post's post_modified timestamp.
+This plugin allows you to choose to update a post without having WordPress automatically update the post's post_modified timestamp.
 
-WordPress maintains a post field called post_modified which tracks the date the post was last edited.  This value is used by feeds to indicate the latest update to each post or to report the latest updated post.  Plugins and other manual uses of some of WordPress's template tags may also reference the post modification date to call attention to posts that have been updated.  However, if an update is such that you don't want it to be recorded in the post_modified date field (perhaps due to the update being a small formatting/editing change or fix, or if you just want to keep quiet about an update), then this plugin is for you.
+WordPress maintains a post field called post_modified which tracks the date the post was last edited. This value is used by feeds to indicate the latest update to each post or to report the latest updated post. Plugins and themes may also reference the post modification date to call attention to posts that have been updated. However, if an update is such that you don't want it to be recorded in the post_modified date field (perhaps due to the update being a small formatting/editing change or fixing a typo, or if you just want to keep quiet about an update), then this plugin is for you.
 
-This plugin adds a "Stealth update?" checkbox to the "Publish" box of any post or pages "Edit Post" admin page.
+This plugin adds a "Stealth update?" checkbox to the "Publish" box of any post's or page's "Edit Post" admin page.
 
-Note: The fact that a post was stealth updated is not retained once the update completes.  You must re-check the "Stealth update?" checkbox for subsequent updates that you wish to also be stealthy (unless you configure the checkbox to be checked by default -- see FAQ).
+Note: The plugin records when a post is stealth updated, so subsequent edits of the post will have the "Stealth update?" checkbox checked by default.
 
-Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/stealth-update/) | [Plugin Directory Page](http://wordpress.org/extend/plugins/stealth-update/) | [Author Homepage](http://coffee2code.com)
+Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/stealth-update/) | [Plugin Directory Page](https://wordpress.org/plugins/stealth-update/) | [Author Homepage](http://coffee2code.com)
 
 
 == Installation ==
@@ -35,7 +34,7 @@ Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/stealth-update/) | [P
 
 == Screenshots ==
 
-1. A screenshot of the 'Publish' sidebar box on the Edit Post admin page.  The 'Stealth update?' checkbox is integrated alongside the existing fields.
+1. A screenshot of the 'Publish' sidebar box on the Edit Post admin page. The 'Stealth update?' checkbox is integrated alongside the existing fields.
 2. A screenshot of the 'Stealth update?' checkbox displaying help text when hovering over the checkbox.
 
 
@@ -43,11 +42,15 @@ Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/stealth-update/) | [P
 
 = Why would I want to stealth update a post? =
 
-This update dates for posts are used by feeds to indicate the latest update to each post or to report the latest updated post.  Plugins and other manual uses of some of WordPress's template tags may also reference the post modification date to call attention to posts that have been updated.  However, if an update is such that you don't want it to be recorded in the post_modified date field (perhaps due to the update being a small formatting/editing change or fix, or if you just want to keep quiet about an update), then this plugin is for you.
+This update dates for posts are used by feeds to indicate the latest update to each post or to report the latest updated post. Plugins and other manual uses of some of WordPress's template tags may also reference the post modification date to call attention to posts that have been updated. However, if an update is such that you don't want it to be recorded in the post_modified date field (perhaps due to the update being a small formatting/editing change or fix, or if you just want to keep quiet about an update), then this plugin is for you.
 
 = Can I have the checkbox checked by default? =
 
-Yes. See the Filters section (under Other Notes) and look for the example using the 'c2c_stealth_update_default' filter. You'll have to put that code into your active theme's functions.php file.
+Yes. See the Filters section (under Other Notes) and look for the example using the 'c2c_stealth_update_default' filter. You'll have to put that code into your active theme's functions.php file. Note that if a post was updated with the checkbox checked, when that post gets edited again the checkbox will be checked by default.
+
+= Does this plugin include unit tests? =
+
+Yes.
 
 
 == Filters ==
@@ -56,19 +59,19 @@ The plugin is further customizable via two filters. Typically, these customizati
 
 = c2c_stealth_update_meta_key (filter) =
 
-The 'c2c_stealth_update_meta_key' filter allows you to override the name of the custom field key used by the plugin to store a post's stealth update status.  This isn't a common need.
+The 'c2c_stealth_update_meta_key' filter allows you to override the name of the custom field key used by the plugin to store a post's stealth update status. This isn't a common need.
 
 Arguments:
 
-* $custom_field_key (string): The custom field key to be used by the plugin.  By default this is '_stealth-update'.
+* $custom_field_key (string): The custom field key to be used by the plugin. By default this is '_stealth-update'.
 
 Example:
 
 `
-add_filter( 'c2c_stealth_update_meta_key', 'override_stealth_update_key' );
 function override_stealth_update_key( $custom_field_key ) {
 	return '_my_custom_stealth-update';
 }
+add_filter( 'c2c_stealth_update_meta_key', 'override_stealth_update_key' );
 `
 
 = c2c_stealth_update_default (filter) =
@@ -89,6 +92,36 @@ add_filter( 'c2c_stealth_update_default', '__return_true' );
 
 
 == Changelog ==
+
+= 2.4.3 (2015-08-09) =
+* Bugfix: Remove 'Stealth Update?' checkbox from quick edit panel as its implementation has since been broken. Potential return in v2.5.
+* Update: Note compatibility through WP 4.3+
+
+= 2.4.2 (2015-02-21) =
+* Revert to using `dirname(__FILE__)`; __DIR__ is only supported in PHP 5.3+
+
+= 2.4.1 (2015-02-17) =
+* Add more unit tests
+* Reformat plugin header
+* Use __DIR__ instead of `dirname(__FILE__)`
+* Note compatibility through WP 4.1+
+* Change documentation links to w.org to be https
+* Minor documentation spacing changes throughout
+* Update copyright date (2015)
+* Add plugin icon
+* Regenerate .pot
+
+= 2.4 (2014-01-23) =
+* Add unit tests
+* Minor documentation improvements
+* Minor code reformatting (spacing, bracing)
+* Note compatibility through WP 3.8+
+* Drop compatibility with version of WP older than 3.6
+* Update copyright date (2014)
+* Regenerate .pot
+* Change donate link
+* Update screenshots
+* Add banner
 
 = 2.3 =
 * Deprecate 'stealth_update_meta_key' filter in favor of 'c2c_stealth_update_meta_key' (but keep it temporarily for backwards compatibility)
@@ -169,6 +202,18 @@ add_filter( 'c2c_stealth_update_default', '__return_true' );
 
 == Upgrade Notice ==
 
+= 2.4.3 =
+Bugfix release: Remove checkbox from quick edit panel as its implementation has been broken. Possible return in v2.5. Noted compatibility through WP 4.3+
+
+= 2.4.2 =
+Bugfix release (for sites using the ancient PHP 5.2): revert use of __DIR__ constant since it wasn't introduced until PHP 5.3
+
+= 2.4.1 =
+Trivial update: added more unit tests; noted compatibility through WP 4.1+; updated copyright date (2015); added plugin icon
+
+= 2.4 =
+Minor update: added unit tests; noted compatibility through WP 3.8+; dropped compatibility with versions of WP older than 3.6
+
 = 2.3 =
 Recommended update: renamed and deprecated a filter; noted compatibility through WP 3.5+; and more.
 
@@ -182,7 +227,7 @@ Minor update: added new filter to allow making checkbox checked by default; note
 Minor update: implementation changes; noted compatibility with WP 3.1+ and updated copyright date.
 
 = 2.0.2 =
-Recommended bugfix release.  Fixes bug where auto-save can lose value of stealth update status.
+Recommended bugfix release. Fixes bug where auto-save can lose value of stealth update status.
 
 = 2.0.1 =
 Recommended major update! Highlights: re-implemented; add class for CSS customizations; full localization support; verified WP 3.0 compatibility; dropped compatibility with version of WP older than 2.9.
